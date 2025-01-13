@@ -32,7 +32,7 @@ namespace Insurance_Policy_MS.Repositories
             return policy;
         }
 
-        public async Task<InsurancePolicy> UpdateAsync(Guid Id)
+        public async Task<InsurancePolicy> UpdateAsync(Guid id, InsurancePolicy insurancePolicy)
         {
             InsurancePolicy existingPolicy = await _context.Policies.FindAsync(id);
             if (existingPolicy == null)
