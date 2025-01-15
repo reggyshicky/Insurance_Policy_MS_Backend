@@ -1,4 +1,5 @@
-﻿using Insurance_Policy_MS.Models;
+﻿using Insurance_Policy_MS.Dtos;
+using Insurance_Policy_MS.Models;
 
 namespace Insurance_Policy_MS.Repositories
 {
@@ -6,7 +7,7 @@ namespace Insurance_Policy_MS.Repositories
     {
         Task<List<InsurancePolicy>> GetAllAsync();
         Task<InsurancePolicy?> GetByIdAsync(Guid Id);
-        Task<InsurancePolicy> CreateAsync(InsurancePolicy insurancePolicy);
+        Task<Response<GetInsurancePolicyDto>> CreateAsync(CreateInsuranceDto dto);
         Task<InsurancePolicy> UpdateAsync(Guid id, InsurancePolicy insurancePolicy);
 
         Task<bool?> DeleteAsync(Guid id);

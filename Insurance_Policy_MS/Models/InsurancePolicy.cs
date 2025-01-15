@@ -46,6 +46,8 @@ namespace Insurance_Policy_MS.Models
 
         public DateTime? UpdatedAt { get; set; }
 
+        public string CreatedBy { get; set; } = "Admin"; //this will be hardcoded since the app does not have authentication yet
+
         public PolicyStatus Status { get; set; } = PolicyStatus.Active;
 
 

@@ -1,16 +1,48 @@
-﻿using Insurance_Policy_MS.Data;
+﻿using AutoMapper;
+using Insurance_Policy_MS.Data;
 using Insurance_Policy_MS.Dtos;
 using Insurance_Policy_MS.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Insurance_Policy_MS.Repositories
 {
-    public class PolicyRepository
+    public class PolicyRepository : IPolicyRepository
     {
         private readonly InsuranceDbContext _context;
-        public PolicyRepository(InsuranceDbContext context)
+        private readonly IMapper _mapper;
+        private readonly ILogger _logger;
+        public PolicyRepository(InsuranceDbContext context, IMapper mapper, ILogger<PolicyRepository> logger)
         {
             _context = context;
+            _mapper = mapper;
+            _logger = logger;
+        }
+
+        public async Task<Response<GetInsurancePolicyDto>> CreateAsync(CreateInsuranceDto dto)
+        {
+            try
+            {
+                var policy = _mapper.Map<InsurancePolicy>(dto);
+                await _context.Policies.AddAsync(policy);
+                await _context.SaveChangesAsync();
+                return new Response<GetInsurancePolicyDto>
+                {
+                    Message = "Insurance Policy Created Succesfully!",
+                    Status = HttpStatusCode.Created,
+                    Data = _mapper.Map<GetInsurancePolicyDto>(policy)
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"error, {ex}");
+                return new Response<GetInsurancePolicyDto>
+                {
+                    Message = "Error occured while creating an insurance policy",
+                    Status = HttpStatusCode.InternalServerError,
+                    Data = null
+                };
+            }
         }
 
         public async Task<List<InsurancePolicy>> GetAllAsync()
@@ -25,12 +57,7 @@ namespace Insurance_Policy_MS.Repositories
             return await _context.Policies.FindAsync(id);
         }
 
-        public async Task<InsurancePolicy> CreateAsync(InsurancePolicy policy)
-        {
-            await _context.Policies.AddAsync(policy);
-            await _context.SaveChangesAsync();
-            return policy;
-        }
+
 
         public async Task<InsurancePolicy> UpdateAsync(Guid id, InsurancePolicy insurancePolicy)
         {
@@ -65,7 +92,9 @@ namespace Insurance_Policy_MS.Repositories
             return true;
 
         }
-
-
+        Task<bool?> IPolicyRepository.DeleteAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

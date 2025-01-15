@@ -12,14 +12,16 @@ namespace Insurance_Policy_MS.Controllers
     public class InsurancePolicyController : ControllerBase
     {
         private readonly IPolicyRepository _repo;
-        public InsurancePolicyController(IPolicyRepository repo, IMapper mapper)
+        public InsurancePolicyController(IPolicyRepository repo)
         {
             _repo = repo;
         }
 
-        public Task<ActionResult<GetInsurancePolicyDto>> CreateInsurancePolicy(CreateInsuranceDto dto)
+        [HttpPost]
+        [Route("create")]
+        public async Task<ActionResult<Response<GetInsurancePolicyDto>>> CreateInsurancePolicy(CreateInsuranceDto dto)
         {
-            var dto
+            return await _repo.CreateAsync(dto);
         }
     }
 }
