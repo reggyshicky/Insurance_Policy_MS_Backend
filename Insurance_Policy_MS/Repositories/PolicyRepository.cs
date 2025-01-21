@@ -65,11 +65,26 @@ namespace Insurance_Policy_MS.Repositories
             }
         }
 
-        public async Task<List<InsurancePolicy>> GetAllAsync()
+        public async Task<List<GetInsurancePolicyDto>> GetAllAsync()
         {
-            return await _context.Policies
+            var policies = await _context.Policies
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
+
+            List<GetInsurancePolicyDto> dtoPolicies = new List<GetInsurancePolicyDto>();
+            for (int i = 0; i <= policies.Count; i++)
+            {
+                var x = _mapper.Map<GetInsurancePolicyDto>(policies[i]);
+                dtoPolicies.Add(x);
+            }
+
+            return new Response<List<GetInsurancePolicyDto>>
+            {
+                Message = "Policis retrieved succesfully!",
+                Data = dtoPolicies,
+                Status = HttpStatusCode.OK
+
+            };
         }
 
         public async Task<InsurancePolicy> GetByIdAsync(Guid id)
