@@ -28,7 +28,7 @@ namespace Insurance_Policy_MS.Models
         public string PolicyHolderPhone { get; set; }
 
         [Required]
-        public PolicyType PolicyType { get; set; }
+        public string PolicyType { get; set; } = string.Empty;
 
         [Required]
         public decimal CoverageAmount { get; set; }
@@ -48,26 +48,6 @@ namespace Insurance_Policy_MS.Models
 
         public string CreatedBy { get; set; } = "Admin"; //this will be hardcoded since the app does not have authentication yet
 
-        public PolicyStatus Status { get; set; } = PolicyStatus.Active;
-
-
-    }
-
-    public enum PolicyStatus
-    {
-        Active,
-        Expired,
-        Cancelled,
-        Pending
-    }
-
-    public enum PolicyType
-    {
-        Life,
-        Health,
-        Auto,
-        Property,
-        Travel,
-        Business
+        public string Status { get; set; } = string.Empty;
     }
 }

@@ -2,6 +2,7 @@
 using Insurance_Policy_MS.Data;
 using Insurance_Policy_MS.Dtos;
 using Insurance_Policy_MS.Models;
+using Insurance_Policy_MS.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
@@ -24,6 +25,25 @@ namespace Insurance_Policy_MS.Repositories
             try
             {
                 var policy = _mapper.Map<InsurancePolicy>(dto);
+
+                var checKIfExists = await _context.Policies.FirstOrDefaultAsync(x => x.PolicyNumber == dto.PolicyNumber);
+                if (checKIfExists is not null)
+                {
+                    return new Response<GetInsurancePolicyDto>
+                    {
+                        Message = "Policy already exists",
+                        Data = null,
+                        Status = HttpStatusCode.BadRequest
+
+                    };
+                }
+
+
+                if (policy.PolicyNumber == dto.PolicyNumber)
+                {
+
+                }
+                policy.Status = PolicyStatus.Active.ToString();
                 await _context.Policies.AddAsync(policy);
                 await _context.SaveChangesAsync();
                 return new Response<GetInsurancePolicyDto>
@@ -80,7 +100,7 @@ namespace Insurance_Policy_MS.Repositories
             return existingPolicy;
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool?> DeleteAsync(Guid id)
         {
             var policy = await _context.Policies.FindAsync(id);
             if (policy == null)
@@ -91,10 +111,6 @@ namespace Insurance_Policy_MS.Repositories
             await _context.SaveChangesAsync();
             return true;
 
-        }
-        Task<bool?> IPolicyRepository.DeleteAsync(Guid id)
-        {
-            throw new NotImplementedException();
         }
     }
 }

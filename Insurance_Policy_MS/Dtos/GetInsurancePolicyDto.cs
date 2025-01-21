@@ -14,7 +14,7 @@ namespace Insurance_Policy_MS.Dtos
 
         public string PolicyHolderPhone { get; set; }
 
-        public PolicyType PolicyType { get; set; }
+        public string PolicyType { get; set; }
 
         public decimal CoverageAmount { get; set; }
 

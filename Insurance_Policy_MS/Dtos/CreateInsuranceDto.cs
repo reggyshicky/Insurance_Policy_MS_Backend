@@ -28,7 +28,7 @@ namespace Insurance_Policy_MS.Dtos
         public string PolicyHolderPhone { get; set; }
 
         [Required(ErrorMessage = "Policy type is required")]
-        public PolicyType PolicyType { get; set; }
+        public string PolicyType { get; set; }
 
         [Required(ErrorMessage = "Coverage amount is required")]
         [Range(1000, 10000000, ErrorMessage = "Coverage amount must be between 1,000 and 10,000,000")]
