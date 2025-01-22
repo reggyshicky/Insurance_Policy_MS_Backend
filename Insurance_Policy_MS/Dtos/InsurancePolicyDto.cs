@@ -2,7 +2,7 @@
 
 namespace Insurance_Policy_MS.Dtos
 {
-    public class GetInsurancePolicyDto
+    public class InsurancePolicyDto
     {
         public string PolicyNumber { get; set; }
 

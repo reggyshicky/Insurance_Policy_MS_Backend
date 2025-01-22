@@ -21,7 +21,7 @@ namespace Insurance_Policy_MS.Repositories
             _logger = logger;
         }
 
-        public async Task<Response<GetInsurancePolicyDto>> CreateAsync(CreateInsuranceDto dto)
+        public async Task<Response<InsurancePolicyDto>> CreateAsync(CreateInsuranceDto dto)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace Insurance_Policy_MS.Repositories
                 var checKIfExists = await _context.Policies.FirstOrDefaultAsync(x => x.PolicyNumber == dto.PolicyNumber);
                 if (checKIfExists is not null)
                 {
-                    return new Response<GetInsurancePolicyDto>
+                    return new Response<InsurancePolicyDto>
                     {
                         Message = "Policy already exists",
                         Data = null,
@@ -47,17 +47,17 @@ namespace Insurance_Policy_MS.Repositories
                 policy.Status = PolicyStatus.Active.ToString();
                 await _context.Policies.AddAsync(policy);
                 await _context.SaveChangesAsync();
-                return new Response<GetInsurancePolicyDto>
+                return new Response<InsurancePolicyDto>
                 {
                     Message = "Insurance Policy Created Succesfully!",
                     Status = HttpStatusCode.Created,
-                    Data = _mapper.Map<GetInsurancePolicyDto>(policy)
+                    Data = _mapper.Map<InsurancePolicyDto>(policy)
                 };
             }
             catch (Exception ex)
             {
                 _logger.LogError($"error, {ex}");
-                return new Response<GetInsurancePolicyDto>
+                return new Response<InsurancePolicyDto>
                 {
                     Message = "Error occured while creating an insurance policy",
                     Status = HttpStatusCode.InternalServerError,
@@ -66,19 +66,19 @@ namespace Insurance_Policy_MS.Repositories
             }
         }
 
-        public async Task<Response<List<GetInsurancePolicyDto>>> GetAllAsync()
+        public async Task<Response<List<InsurancePolicyDto>>> GetAllAsync()
         {
             var policies = await _context.Policies
                 .ToListAsync();
 
-            List<GetInsurancePolicyDto> dtoPolicies = new List<GetInsurancePolicyDto>();
+            List<InsurancePolicyDto> dtoPolicies = new List<InsurancePolicyDto>();
             for (int i = 0; i < policies.Count; i++)
             {
-                var x = _mapper.Map<GetInsurancePolicyDto>(policies[i]);
+                var x = _mapper.Map<InsurancePolicyDto>(policies[i]);
                 dtoPolicies.Add(x);
             }
 
-            return new Response<List<GetInsurancePolicyDto>>
+            return new Response<List<InsurancePolicyDto>>
             {
                 Message = "Policis retrieved succesfully!",
                 Data = dtoPolicies,
@@ -86,48 +86,70 @@ namespace Insurance_Policy_MS.Repositories
             };
         }
 
-        public async Task<Response<GetInsurancePolicyDto?>> GetPolicyAsync(string policyNumber)
+        public async Task<Response<InsurancePolicyDto?>> GetPolicyAsync(string policyNumber)
         {
             var policy = await _context.Policies.FirstOrDefaultAsync(x => x.PolicyNumber == policyNumber);
             if (policy is null)
             {
-                return new Response<GetInsurancePolicyDto?>
+                return new Response<InsurancePolicyDto?>
                 {
                     Message = "Insurance Policy does not exist!!",
                     Data = null,
                     Status = HttpStatusCode.OK
                 };
             }
-            return new Response<GetInsurancePolicyDto?>
+            return new Response<InsurancePolicyDto?>
             {
                 Message = "Insurance Policy retrieved succesfully!!",
-                Data = _mapper.Map<GetInsurancePolicyDto>(policy),
+                Data = _mapper.Map<InsurancePolicyDto>(policy),
                 Status = HttpStatusCode.OK
             };
         }
 
 
 
-        //public async Task<Response<InsurancePolicy>> UpdateAsync(Guid id, InsurancePolicy insurancePolicy)
-        //{
-        //    InsurancePolicy existingPolicy = await _context.Policies.FindAsync(id);
-        //    if (existingPolicy == null)
-        //        return null;
+        public async Task<Response<InsurancePolicyDto>> UpdateAsync(string policyNumber, InsurancePolicyDto insurancePolicy)
+        {
+            try
+            {
+                var existingPolicy = await _context.Policies.FirstOrDefaultAsync(x => x.PolicyNumber == policyNumber);
+                if (existingPolicy == null)
+                {
+                    return new Response<InsurancePolicyDto>
+                    {
+                        Message = "Insurance Policy to be updated does not exist",
+                        Data = null,
+                        Status = HttpStatusCode.BadRequest
+                    };
+                }
 
-        //    existingPolicy.PolicyHolderName = existingPolicy.PolicyHolderName;
-        //    existingPolicy.PolicyHolderAddress = existingPolicy.PolicyHolderAddress;
-        //    existingPolicy.PolicyHolderEmail = existingPolicy.PolicyHolderEmail;
-        //    existingPolicy.PolicyHolderPhone = existingPolicy.PolicyHolderPhone;
-        //    existingPolicy.CoverageAmount = existingPolicy.CoverageAmount;
-        //    existingPolicy.Premium = existingPolicy.Premium;
-        //    existingPolicy.StartDate = existingPolicy.StartDate;
-        //    existingPolicy.EndDate = existingPolicy.EndDate;
-        //    existingPolicy.Status = existingPolicy.Status;
-        //    existingPolicy.UpdatedAt = DateTime.UtcNow;
+                existingPolicy.PolicyHolderName = insurancePolicy.PolicyHolderName;
+                existingPolicy.PolicyHolderAddress = insurancePolicy.PolicyHolderAddress;
+                existingPolicy.PolicyHolderEmail = insurancePolicy.PolicyHolderEmail;
+                existingPolicy.PolicyHolderPhone = insurancePolicy.PolicyHolderPhone;
+                existingPolicy.CoverageAmount = insurancePolicy.CoverageAmount;
+                existingPolicy.Premium = insurancePolicy.Premium;
+                existingPolicy.StartDate = insurancePolicy.StartDate;
+                existingPolicy.EndDate = insurancePolicy.EndDate;
+                existingPolicy.Status = insurancePolicy.Status;
+                existingPolicy.UpdatedAt = DateTime.UtcNow;
 
-        //    await _context.SaveChangesAsync();
-        //    return existingPolicy;
-        //}
+                await _context.SaveChangesAsync();
+                return existingPolicy;
+            }
+            catch (Exception error)
+            {
+                Console.WriteLine("Error" + error);
+                return new Response<InsurancePolicyDto>
+                {
+                    Message = "Error occurred while updating the policy",
+                    Data = null,
+                    Status = HttpStatusCode.InternalServerError
+                };
+
+            }
+
+        }
 
         public async Task<Response<bool?>> DeleteAsync(string policyNumber)
         {

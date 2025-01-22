@@ -9,7 +9,7 @@ namespace Insurance_Policy_MS.Mappings
         public AutoMapperProfiles()
         {
             CreateMap<InsurancePolicy, CreateInsuranceDto>().ReverseMap();
-            CreateMap<InsurancePolicy, GetInsurancePolicyDto>().ReverseMap();
+            CreateMap<InsurancePolicy, InsurancePolicyDto>().ReverseMap();
         }
     }
 }
