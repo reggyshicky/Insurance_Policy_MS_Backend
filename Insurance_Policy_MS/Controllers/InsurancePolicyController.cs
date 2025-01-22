@@ -19,9 +19,25 @@ namespace Insurance_Policy_MS.Controllers
 
         [HttpPost]
         [Route("create")]
-        public async Task<ActionResult<Response<GetInsurancePolicyDto>>> CreateInsurancePolicy(CreateInsuranceDto dto)
+        public async Task<ActionResult<Response<GetInsurancePolicyDto>>> CreateInsurancePolicy([FromBody] CreateInsuranceDto dto)
         {
             return await _repo.CreateAsync(dto);
         }
+
+        [HttpGet]
+        [Route("getall")]
+        public async Task<ActionResult<Response<List<GetInsurancePolicyDto>>>> GetInsurancePolicies()
+        {
+            return await _repo.GetAllAsync();
+        }
+
+        [HttpGet]
+        [Route("getpolicy/{policyNumber}")]
+        public async Task<ActionResult<Response<GetInsurancePolicyDto?>>> GetInsurancePolicy(string policyNumber)
+        {
+            return await _repo.GetPolicyAsync(policyNumber);
+        }
+
+
     }
 }

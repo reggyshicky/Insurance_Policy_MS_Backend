@@ -5,12 +5,12 @@ namespace Insurance_Policy_MS.Repositories
 {
     public interface IPolicyRepository
     {
-        Task<List<GetInsurancePolicyDto>> GetAllAsync();
-        Task<InsurancePolicy?> GetByIdAsync(Guid Id);
+        Task<Response<List<GetInsurancePolicyDto>>> GetAllAsync();
+        Task<Response<GetInsurancePolicyDto?>> GetPolicyAsync(string policyNumber);
         Task<Response<GetInsurancePolicyDto>> CreateAsync(CreateInsuranceDto dto);
-        Task<InsurancePolicy> UpdateAsync(Guid id, InsurancePolicy insurancePolicy);
+        //Task<Response<InsurancePolicy>> UpdateAsync(Guid id, InsurancePolicy insurancePolicy);
 
-        Task<bool?> DeleteAsync(Guid id);
+        //Task<Response<bool?>> DeleteAsync(Guid id);
 
     }
 }

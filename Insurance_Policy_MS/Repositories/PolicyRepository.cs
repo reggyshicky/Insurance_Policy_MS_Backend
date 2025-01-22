@@ -65,14 +65,13 @@ namespace Insurance_Policy_MS.Repositories
             }
         }
 
-        public async Task<List<GetInsurancePolicyDto>> GetAllAsync()
+        public async Task<Response<List<GetInsurancePolicyDto>>> GetAllAsync()
         {
             var policies = await _context.Policies
-                .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
 
             List<GetInsurancePolicyDto> dtoPolicies = new List<GetInsurancePolicyDto>();
-            for (int i = 0; i <= policies.Count; i++)
+            for (int i = 0; i < policies.Count; i++)
             {
                 var x = _mapper.Map<GetInsurancePolicyDto>(policies[i]);
                 dtoPolicies.Add(x);
@@ -83,49 +82,63 @@ namespace Insurance_Policy_MS.Repositories
                 Message = "Policis retrieved succesfully!",
                 Data = dtoPolicies,
                 Status = HttpStatusCode.OK
-
             };
         }
 
-        public async Task<InsurancePolicy> GetByIdAsync(Guid id)
+        public async Task<Response<GetInsurancePolicyDto?>> GetPolicyAsync(string policyNumber)
         {
-            return await _context.Policies.FindAsync(id);
+            var policy = await _context.Policies.FirstOrDefaultAsync(x => x.PolicyNumber == policyNumber);
+            if (policy is null)
+            {
+                return new Response<GetInsurancePolicyDto?>
+                {
+                    Message = "Insurance Policy does not exist!!",
+                    Data = null,
+                    Status = HttpStatusCode.OK
+                };
+            }
+            return new Response<GetInsurancePolicyDto?>
+            {
+                Message = "Insurance Policy retrieved succesfully!!",
+                Data = _mapper.Map<GetInsurancePolicyDto>(policy),
+                Status = HttpStatusCode.OK
+            };
         }
 
 
 
-        public async Task<InsurancePolicy> UpdateAsync(Guid id, InsurancePolicy insurancePolicy)
-        {
-            InsurancePolicy existingPolicy = await _context.Policies.FindAsync(id);
-            if (existingPolicy == null)
-                return null;
+        //public async Task<Response<InsurancePolicy>> UpdateAsync(Guid id, InsurancePolicy insurancePolicy)
+        //{
+        //    InsurancePolicy existingPolicy = await _context.Policies.FindAsync(id);
+        //    if (existingPolicy == null)
+        //        return null;
 
-            existingPolicy.PolicyHolderName = existingPolicy.PolicyHolderName;
-            existingPolicy.PolicyHolderAddress = existingPolicy.PolicyHolderAddress;
-            existingPolicy.PolicyHolderEmail = existingPolicy.PolicyHolderEmail;
-            existingPolicy.PolicyHolderPhone = existingPolicy.PolicyHolderPhone;
-            existingPolicy.CoverageAmount = existingPolicy.CoverageAmount;
-            existingPolicy.Premium = existingPolicy.Premium;
-            existingPolicy.StartDate = existingPolicy.StartDate;
-            existingPolicy.EndDate = existingPolicy.EndDate;
-            existingPolicy.Status = existingPolicy.Status;
-            existingPolicy.UpdatedAt = DateTime.UtcNow;
+        //    existingPolicy.PolicyHolderName = existingPolicy.PolicyHolderName;
+        //    existingPolicy.PolicyHolderAddress = existingPolicy.PolicyHolderAddress;
+        //    existingPolicy.PolicyHolderEmail = existingPolicy.PolicyHolderEmail;
+        //    existingPolicy.PolicyHolderPhone = existingPolicy.PolicyHolderPhone;
+        //    existingPolicy.CoverageAmount = existingPolicy.CoverageAmount;
+        //    existingPolicy.Premium = existingPolicy.Premium;
+        //    existingPolicy.StartDate = existingPolicy.StartDate;
+        //    existingPolicy.EndDate = existingPolicy.EndDate;
+        //    existingPolicy.Status = existingPolicy.Status;
+        //    existingPolicy.UpdatedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
-            return existingPolicy;
-        }
+        //    await _context.SaveChangesAsync();
+        //    return existingPolicy;
+        //}
 
-        public async Task<bool?> DeleteAsync(Guid id)
-        {
-            var policy = await _context.Policies.FindAsync(id);
-            if (policy == null)
-                return false;
+        //public async Task<Response<bool?>> DeleteAsync(Guid id)
+        //{
+        //    var policy = await _context.Policies.FindAsync(id);
+        //    if (policy == null)
+        //        return false;
 
-            _context.Policies.Remove(policy);
+        //    _context.Policies.Remove(policy);
 
-            await _context.SaveChangesAsync();
-            return true;
+        //    await _context.SaveChangesAsync();
+        //    return true;
 
-        }
+        //}
     }
 }
