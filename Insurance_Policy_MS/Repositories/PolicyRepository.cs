@@ -4,6 +4,7 @@ using Insurance_Policy_MS.Dtos;
 using Insurance_Policy_MS.Models;
 using Insurance_Policy_MS.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Net;
 
 namespace Insurance_Policy_MS.Repositories
@@ -128,17 +129,30 @@ namespace Insurance_Policy_MS.Repositories
         //    return existingPolicy;
         //}
 
-        //public async Task<Response<bool?>> DeleteAsync(Guid id)
-        //{
-        //    var policy = await _context.Policies.FindAsync(id);
-        //    if (policy == null)
-        //        return false;
+        public async Task<Response<bool?>> DeleteAsync(string policyNumber)
+        {
+            var policy = await _context.Policies.FirstOrDefaultAsync(x => x.PolicyNumber == policyNumber);
+            if (policy is null)
+            {
+                return new Response<bool?>
+                {
+                    Message = "Insurance Policy does not exist!!",
+                    Data = false,
+                    Status = HttpStatusCode.BadRequest
+                };
+            }
 
-        //    _context.Policies.Remove(policy);
 
-        //    await _context.SaveChangesAsync();
-        //    return true;
+            _context.Policies.Remove(policy);
 
-        //}
+            await _context.SaveChangesAsync();
+            return new Response<bool?>
+            {
+                Message = "Insurance Policy deleted succesfully",
+                Data = true,
+                Status = HttpStatusCode.OK
+            };
+
+        }
     }
 }

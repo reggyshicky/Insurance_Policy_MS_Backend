@@ -10,7 +10,7 @@ namespace Insurance_Policy_MS.Repositories
         Task<Response<GetInsurancePolicyDto>> CreateAsync(CreateInsuranceDto dto);
         //Task<Response<InsurancePolicy>> UpdateAsync(Guid id, InsurancePolicy insurancePolicy);
 
-        //Task<Response<bool?>> DeleteAsync(Guid id);
+        Task<Response<bool?>> DeleteAsync(string policyNumber);
 
     }
 }

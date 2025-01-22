@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Insurance_Policy_MS.Dtos;
-using Insurance_Policy_MS.Models;
 using Insurance_Policy_MS.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +37,11 @@ namespace Insurance_Policy_MS.Controllers
             return await _repo.GetPolicyAsync(policyNumber);
         }
 
-
+        [HttpDelete]
+        [Route("deletepolicy/{policyNumber}")]
+        public async Task<ActionResult<Response<bool?>>> DeletePolicy(string policyNumber)
+        {
+            return await _repo.DeleteAsync(policyNumber);
+        }
     }
 }
