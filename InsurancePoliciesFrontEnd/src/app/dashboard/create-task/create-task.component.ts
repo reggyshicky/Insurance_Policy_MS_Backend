@@ -13,7 +13,7 @@ export class CreateTaskComponent {
   constructor(private taskService:TaskService){}
   @Input() isEditMode: boolean = false;
 
-  @Input() selectedTask: Task={title:'',desc:''};
+  @Input() selectedTask: Task={title:'',PolicyNumber:''};
 
   @ViewChild('taskForm') policyForm: NgForm;
 
@@ -27,13 +27,13 @@ export class CreateTaskComponent {
   formValidationErrormessage:EventEmitter<string> = new EventEmitter<string>()
 
   title:string=''
-  desc:string=''
+  PolicyNumber:string=''
 
   ngOnInit():void {
   this.taskService.selectedTask.subscribe({
     next:(task)=>{
       this.title=task.title
-      this.desc=task.desc
+      this.PolicyNumber=task.PolicyNumber
 
     }
   })
@@ -48,7 +48,7 @@ export class CreateTaskComponent {
 
   OnCloseForm(){
     this.CloseForm.emit(false);
-    this.taskService.editTask({title:'',desc:''})
+    this.taskService.editTask({title:'',PolicyNumber:''})
   }
 
   OnFormSubmitted(form: NgForm){

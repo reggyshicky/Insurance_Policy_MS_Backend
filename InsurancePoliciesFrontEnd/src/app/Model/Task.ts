@@ -2,7 +2,7 @@ export class Task{
     constructor(
         
         
-        public desc: string,
+        public PolicyNumber: string,
         public title: string,
         public name?: string, 
         public assignedTo?: string,
