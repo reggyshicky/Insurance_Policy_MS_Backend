@@ -4,7 +4,6 @@ using Insurance_Policy_MS.Dtos;
 using Insurance_Policy_MS.Models;
 using Insurance_Policy_MS.ValueObjects;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Net;
 
 namespace Insurance_Policy_MS.Repositories
@@ -39,11 +38,6 @@ namespace Insurance_Policy_MS.Repositories
                     };
                 }
 
-
-                if (policy.PolicyNumber == dto.PolicyNumber)
-                {
-
-                }
                 policy.Status = PolicyStatus.Active.ToString();
                 await _context.Policies.AddAsync(policy);
                 await _context.SaveChangesAsync();
@@ -69,6 +63,7 @@ namespace Insurance_Policy_MS.Repositories
         public async Task<Response<List<InsurancePolicyDto>>> GetAllAsync()
         {
             var policies = await _context.Policies
+                .Where(x => x.Status != "Deleted")
                 .ToListAsync();
 
             List<InsurancePolicyDto> dtoPolicies = new List<InsurancePolicyDto>();
@@ -88,7 +83,7 @@ namespace Insurance_Policy_MS.Repositories
 
         public async Task<Response<InsurancePolicyDto?>> GetPolicyAsync(string policyNumber)
         {
-            var policy = await _context.Policies.FirstOrDefaultAsync(x => x.PolicyNumber == policyNumber);
+            var policy = await _context.Policies.FirstOrDefaultAsync(x => x.PolicyNumber == policyNumber && x.Status != "Deleted");
             if (policy is null)
             {
                 return new Response<InsurancePolicyDto?>
@@ -135,7 +130,12 @@ namespace Insurance_Policy_MS.Repositories
                 existingPolicy.UpdatedAt = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync();
-                return existingPolicy;
+                return new Response<InsurancePolicyDto>
+                {
+                    Message = "Insurance Policy updated succesfully!",
+                    Data = _mapper.Map<InsurancePolicyDto>(existingPolicy),
+                    Status = HttpStatusCode.OK
+                };
             }
             catch (Exception error)
             {
@@ -163,9 +163,8 @@ namespace Insurance_Policy_MS.Repositories
                     Status = HttpStatusCode.BadRequest
                 };
             }
-
-
-            _context.Policies.Remove(policy);
+            policy.Status = PolicyStatus.Deleted.ToString();
+            //_context.Policies.Remove(policy); //we use soft delete
 
             await _context.SaveChangesAsync();
             return new Response<bool?>

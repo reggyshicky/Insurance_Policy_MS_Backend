@@ -43,5 +43,13 @@ namespace Insurance_Policy_MS.Controllers
         {
             return await _repo.DeleteAsync(policyNumber);
         }
+
+        [HttpPut]
+        [Route("update/{policyNumber}")]
+        public async Task<ActionResult<Response<InsurancePolicyDto>>> updatePolicy([FromBody] InsurancePolicyDto dto, string policyNumber)
+        {
+            return await _repo.UpdateAsync(policyNumber, dto);
+        }
+
     }
 }
